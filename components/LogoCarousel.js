@@ -1,81 +1,94 @@
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 
-// https://betterprogramming.pub/how-to-create-react-infinite-slider-22b76cbd7a9
+const Logo = ({ logoSrc }) => {
+  const [isHover, setIsHover] = useState(false);
+
+  return (
+    <div
+      style={{
+        overflow: 'hidden',
+        textAlign: 'center',
+        background: 'white',
+        borderRadius: 6,
+        boxShadow: '1px 1px 16px -2px rgba(0,0,0,.3)',
+        position: 'relative',
+        //filter: `grayscale(${isHover ? 0 : 1})`,
+        transition: '0.5s',
+      }}
+      onPointerOver={() => setIsHover(true)}
+      onPointerLeave={() => setIsHover(false)}
+    >
+      <img
+        src={logoSrc}
+        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+      />
+    </div>
+  );
+};
+
+const LogoCarouselGrid = ({ children }) => (
+  <div
+    style={{
+      width: '50%',
+      display: 'grid',
+      gridTemplateColumns: `repeat(${children.length}, 1fr)`,
+      gap: 10,
+    }}
+  >
+    {children}
+  </div>
+);
+
+const marqueeVariants = {
+  animate: {
+    x: ['0%', '-50%'],
+    transition: {
+      x: {
+        repeat: Infinity,
+        repeatType: 'loop',
+        duration: 20,
+        ease: 'linear',
+      },
+    },
+  },
+};
 
 export default function LogoCarousel({ items }) {
+  const [animate, setAnimate] = useState(true);
+
   return (
     <div
       className="carousel-wrapper"
-      style={{ overflow: 'hidden', width: '100%' }}
+      style={{
+        overflow: 'hidden',
+        width: '100%',
+        paddingTop: 20,
+        paddingBottom: 20,
+      }}
     >
       {items?.length > 0 && (
         <motion.div
           className="carousel-grid"
           style={{
-            width: '300%',
+            width: '200%',
             display: 'flex',
-            background: 'tomato',
+            gap: 10,
           }}
-          initial={{ x: 0 }}
-          animate={{ x: '-50%' }}
-          transition={{
-            duration: 45,
-          }}
-          drag="x"
+          variants={marqueeVariants}
+          animate={'animate'}
         >
-          <div
-            style={{
-              width: '50%',
-              display: 'grid',
-              gridTemplateColumns: `repeat(${items.length}, 120px)`,
-              gap: 10,
-              padding: 10,
-              background: 'red',
-            }}
-          >
+          <LogoCarouselGrid>
             {items.map((item) => {
-              return (
-                <div
-                  key={item}
-                  style={{
-                    padding: 20,
-                    textAlign: 'center',
-                    background: 'white',
-                    borderRadius: 6,
-                  }}
-                >
-                  {item}
-                </div>
-              );
+              return <Logo key={item.name} logoSrc={item.logoSrc} />;
             })}
-          </div>
+          </LogoCarouselGrid>
 
-          <div
-            style={{
-              width: '50%',
-              display: 'grid',
-              gridTemplateColumns: `repeat(${items.length}, 120px)`,
-              gap: 10,
-              padding: 10,
-              background: 'blue',
-            }}
-          >
+          <LogoCarouselGrid>
             {items.map((item) => {
-              return (
-                <div
-                  key={item + 2}
-                  style={{
-                    padding: 20,
-                    textAlign: 'center',
-                    background: 'white',
-                    borderRadius: 6,
-                  }}
-                >
-                  {item}
-                </div>
-              );
+              return <Logo key={item.name + 2} logoSrc={item.logoSrc} />;
             })}
-          </div>
+          </LogoCarouselGrid>
         </motion.div>
       )}
     </div>
